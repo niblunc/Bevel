@@ -159,7 +159,7 @@ def fill_dict(sub):
             #print(item)
                 ctr=ctr+1
                 main_dict[sub][run]['EV%iTITLE'%ctr] = item
-                ev=os.path.join(data_dir,'func','onsets','%s_task-%s_run-0%s.txt'%(sub, item,run))
+                ev=os.path.join(data_dir,'func','onsets','%s_task-%s_run-%s.txt'%(sub, item,run))
 
 
                 #print("EV: ", ev)
