@@ -62,8 +62,7 @@ def set_dict(sub):
         for run in arglist["RUN"]:
             main_dict[sub][run] = {}
             
-def make_file(sub
-             ):
+def make_file(sub):
     print("skipping registration")
     for key in main_dict:
         for run in arglist["RUN"]:
@@ -96,15 +95,14 @@ def make_file(sub
                     moco = main_dict[key][run]["MOCO%i"%i]
                     tempfsf = tempfsf.replace("MOCO%i"%i, moco)
                     print("MOCO%i: "%i , main_dict[key][run]["MOCO%i"%i])
-                outpath= os.path.join(deriv_dir, sub, 'func', 'Analysis')
-                print(tempfsf)
+                outpath= os.path.join(deriv_dir, sub, 'func', 'Analysis', "feat1")
+                #print(tempfsf)
                 if not os.path.exists(outpath):
                     os.makedirs(outpath)
-
-                #print(main_dict[key])
-                #with open(os.path.join(outpath,'%s_task-%s_run-%s_no_reg.fsf'%(sub,arglist['TASK'], run)),'w') as outfile:
-                    #outfile.write(tempfsf)
-                #outfile.close()
+                print("OUT PATH >>>>>>---------> ", outpath)
+                with open(os.path.join(outpath,'%s_task-%s_run-%s_no_reg.fsf'%(sub,arglist['TASK'], run)),'w') as outfile:
+                    outfile.write(tempfsf)
+                outfile.close()
             infile.close()
         
 def fill_dict(sub):
