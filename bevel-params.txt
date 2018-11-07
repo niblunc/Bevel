@@ -30,7 +30,7 @@ OUTPUT
 NTPTS
 FUNCRUN
 CONFOUND
-EV1 --choice
+EV1 --img
 EV2 --sweet
 EV3 --bitter
 EV4 --neu
