@@ -6,7 +6,7 @@ import re
         
 
 def make_file(sub_id, run, trial_id, output_dir):
-    with open(os.path.join(deriv_dir,'design_files/betaseries/level1_betaseries.fsf'),'r') as infile:
+    with open(os.path.join(deriv_dir,'design_files/level1_betaseries.fsf'),'r') as infile:
         tempfsf=infile.read()
         design_fileout = os.path.join(output_dir, "design_files/%s_run-%s_trial-%s_design1.fsf"%(sub_id, run, trial_id))
         # SET PARAMS 

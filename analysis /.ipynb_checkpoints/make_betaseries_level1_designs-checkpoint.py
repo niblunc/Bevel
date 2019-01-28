@@ -6,9 +6,9 @@ import re
         
 
 def make_file(sub_id, run, trial_id, output_dir):
-    with open(os.path.join(deriv_dir,'betaseries/level1_betaseries.fsf'),'r') as infile:
+    with open(os.path.join(deriv_dir,'design_files/level1_betaseries.fsf'),'r') as infile:
         tempfsf=infile.read()
-        design_fileout = os.path.join(output_dir, "%s_run-%s_trial-%s_design1.fsf"%(sub_id, run, trial_id))
+        design_fileout = os.path.join(output_dir, "design_files/%s_run-%s_trial-%s_design1.fsf"%(sub_id, run, trial_id))
         # SET PARAMS 
         out_param = _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id]["OUTPUT"]
         func_param = _dict[sub_id][run]["FUNCRUN"]
@@ -19,11 +19,11 @@ def make_file(sub_id, run, trial_id, output_dir):
         tempfsf = tempfsf.replace("OUTPUT", out_param)
         tempfsf = tempfsf.replace("FUNCRUN", func_param) 
         tempfsf = tempfsf.replace("CONFOUND", confound_param)
-        tempfsf = tempfsf.replace("TRIAL"", trial_param)
+        tempfsf = tempfsf.replace("TRIAL", trial_param)
         tempfsf = tempfsf.replace("NUIS", nuis_param)
 
         for i in range(6):
-            moco = main_dict[key][run]["MOCO%i"%i]
+            moco = _dict[sub_id][run]["MOCO%i"%i]
             tempfsf = tempfsf.replace("MOCO%i"%i, moco)
         with open(design_fileout,'w') as outfile:
             outfile.write(tempfsf)
@@ -48,12 +48,12 @@ def create_fsf():
     _dict= {}
     # START LOOP!!! -- looping through subjects
     SUBJECTS = glob.glob(os.path.join(deriv_dir, 'sub-*'))
-    for sub_path in SUBJECTS[0]:
+    for sub_path in SUBJECTS[0:5]:
         sub_id=sub_path.split("/")[-1]
         set_dict(sub_id)
         for run in RUNS: # SECOND LOOP -- looping through RUNS
             # MAKE/SET OUTPUT DIRECTORY
-            output_dir = os.path.join(sub_path, "func/Analysis/feat1/betaseries/run-%s/design_files"%run)
+            output_dir = os.path.join(sub_path, "func/Analysis/feat1/betaseries/run-%s"%run)
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
             # GET INPUT FILE 
@@ -80,7 +80,7 @@ def create_fsf():
                     nuis_file = os.path.join(sub_path, "func", "onsets", "bevel%s_run0%s_nuis%s.txt"%(_id, run, trial_id))
                     fileout = os.path.join(output_dir, "%s_run-%s_trial-%s"%(sub_id, run, trial_id))
                     _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id] = {"TRIAL" : trial_file, "NUIS": nuis_file, "OUTPUT" : fileout}
-                    make_file(sub_id, run, trial_id) 
+                    make_file(sub_id, run, trial_id,output_dir) 
 def set_paths():
     global input_dir
     global deriv_dir
