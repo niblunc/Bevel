@@ -25,11 +25,14 @@ def make_file(sub_id, run, trial_id, output_dir):
         for i in range(6):
             moco = _dict[sub_id][run]["MOCO%i"%i]
             tempfsf = tempfsf.replace("MOCO%i"%i, moco)
-        with open(design_fileout,'w') as outfile:
-            outfile.write(tempfsf)
-        outfile.close()
+        try:
+            with open(design_fileout,'w') as outfile:
+                outfile.write(tempfsf)
+            outfile.close()
+        except:
+            print("BAD SUBJECT ", sub_id)
         infile.close()
- 
+
 # here we set up the nested dictionary where the outer keys are the subjects
 # we assume we have 4 runs for each subject and set up the a dictionary w/i the subj dict where the runs are the keys
 # the run dictionary holds another dictionary w/ key "TRIALS", a list of MOCO files, and the input nifti file w/ key FUNCRUN
@@ -48,7 +51,7 @@ def create_fsf():
     _dict= {}
     # START LOOP!!! -- looping through subjects
     SUBJECTS = glob.glob(os.path.join(deriv_dir, 'sub-*'))
-    for sub_path in SUBJECTS[0:5]:
+    for sub_path in SUBJECTS:
         sub_id=sub_path.split("/")[-1]
         set_dict(sub_id)
         for run in RUNS: # SECOND LOOP -- looping through RUNS
