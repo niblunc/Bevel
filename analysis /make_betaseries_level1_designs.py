@@ -8,6 +8,8 @@ import re
 def make_file(sub_id, run, trial_id, output_dir):
     with open(os.path.join(deriv_dir,'design_files/level1_betaseries.fsf'),'r') as infile:
         tempfsf=infile.read()
+        if not os.path.exists(os.path.join(output_dir, "design_files")):
+            os.makedirs(os.path.join(output_dir, "design_files"))
         design_fileout = os.path.join(output_dir, "design_files/%s_run-%s_trial-%s_design1.fsf"%(sub_id, run, trial_id))
         # SET PARAMS 
         out_param = _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id]["OUTPUT"]
