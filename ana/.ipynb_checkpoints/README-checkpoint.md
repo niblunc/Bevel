@@ -6,4 +6,4 @@ Directory:
 * [feat2](https://github.com/niblunc/Bevel/tree/master/ana/feat2) : directory for feat2 analysis
 * [feat3](https://github.com/niblunc/Bevel/tree/master/ana/feat2) : directory for feat3 analysis  
   
-[changelog](https://github.com/niblunc/Bevel/blob/master/CHANGELOG.md) for data processing information. 
+Reference [changelog](https://github.com/niblunc/Bevel/blob/master/CHANGELOG.md) for data processing information. 
