@@ -6,4 +6,4 @@ Directory:
 * [feat2]() : directory for feat2 analysis
 * [feat3]() : directory for feat3 analysis  
 <br>
-Reference [changelog](https://github.com/niblunc/Bevel/blob/master/CHANGELOG.md) for data processing information. 
+Reference [changelog]() for data processing information. 
