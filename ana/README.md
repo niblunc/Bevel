@@ -4,4 +4,5 @@ Directory:
 * [beta]()  : directory for betaseries analysis 
 * [feat1]() : directory for feat1 analysis 
 * [feat2]() : directory for feat2 analysis
-* [feat3]() : directory for feat3 analysis
+* [feat3]() : directory for feat3 analysis  
+Reference [changelog](https://github.com/niblunc/Bevel/blob/master/CHANGELOG.md) for data processing information. 
