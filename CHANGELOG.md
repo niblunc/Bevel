@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
   
   
-## [0.0.1] - 2019-02-06 
+## [0.0.1] - 2019-02-11 
 ### Added  
 - Complete up to date (no error) subject count: 77 
 - complete DICOM to BIDS data added under ~/Nifti/ directory (90 subjects)
