@@ -19,7 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Feat2 analysis completed for 76 subjects
 
 #### Fixed  
-- these subjects had 5 runs(sub-011, sub-013, sub-041, sub-047, sub-052, sub-055, sub-074, sub-078, sub-087), run-3 had incorrect volumes, was fixed
+- many subjects were corrected for bad volumes, and went through pipeline again to adjust for any discrepancies between data 
+
+#### Errors
+- these subjects sub-047, sub-055, sub-033: onset error when trying to run feat1, need further inspection
+- sub-005,  sub-011,  sub-015, sub-030,  sub-036 are missing volumes and/or have too many bad volumes, need further inspection
+
 
 ### Removed
 - sub-065, sub-023, sub-049 each are removed for bad scans
