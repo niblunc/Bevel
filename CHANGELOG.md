@@ -11,12 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   
 ## [0.0.1] - 2019-02-06 
 ### Added  
+- Complete up to date (no error) subject count: 77 
 - complete DICOM to BIDS data added under ~/Nifti/ directory (90 subjects)
 - complete fmriprep data added under ~/fmriprep/ directory (90 subjects)
-- Confounds and skull stripped functionals complete for 76 subjects
-- Feat1 analysis completed for 76 subjects 
-- Feat1 betaseries analysis completed for 76 subjects
-- Feat2 analysis completed for 76 subjects
+- Confounds and skull stripped functionals complete for 77 subjects
+- Feat1 analysis completed for 77 subjects 
+- Feat1 betaseries analysis completed for 77 subjects
+- Feat2 analysis completed for 77 subjects
 
 #### Fixed  
 - many subjects were corrected for bad volumes, and went through pipeline again to adjust for any discrepancies between data 
