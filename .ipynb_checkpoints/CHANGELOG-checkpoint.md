@@ -19,10 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Feat1 betaseries analysis completed for 77 subjects
 - Feat2 analysis completed for 77 subjects
 
-#### Fixed  
+### Fixed  
 - many subjects were corrected for bad volumes, and went through pipeline again to adjust for any discrepancies between data 
 
-#### Errors
+### Errors
 - these subjects sub-047, sub-055, sub-033: onset error when trying to run feat1, need further inspection
 - sub-005,  sub-011,  sub-015, sub-030,  sub-036 are missing volumes and/or have too many bad volumes, need further inspection
 
