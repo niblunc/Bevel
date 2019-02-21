@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 
-  
+sub-015 - "run-2" removed for bad volume count, 3 files available 
+sub-030 - "run-3" removed for bad volume, 3 files available
+sub-036 - "run-2", "run-3" removed for bad volumes
   
 ## [0.0.1] - 2019-02-11 
 ### Added  
@@ -29,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Removed
-- sub-065, sub-023, sub-049 each are removed for bad scans
+- sub-023, sub-049, sub-065 are each removed for unrecoverable scans. 
 
 
 
