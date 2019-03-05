@@ -65,12 +65,12 @@ def write_fsf(sub_dir):
             tempfsf = tempfsf.replace("OUTPUT", outpath)
             
             # Currently script loops through feat directories and assigns to input by index
-            for index,run_path in enumerate(FEATS):
-                run_id = "run%s"%(index+1)
-                print("> %s : %s"%(run_id, run_path))
-                tempfsf = tempfsf.replace(run_id, run_path)
+            for index,feat_path in enumerate(FEATS):
+                feat_id = "FEAT%s"%(index+1)
+                print("> %s : %s"%(feat_id, feat_path))
+                tempfsf = tempfsf.replace(feat_id, feat_path)
             OUTFILE_PATH = os.path.join(FEAT2_DIR, "%s_design_tasks.fsf"%subject_id)
-            print("OUTFILE ------------------------>>>> ", OUTFILE_PATH)
+            print("> OUTFILE: ", OUTFILE_PATH)
             with open(OUTFILE_PATH, "w") as outfile:
                 outfile.write(tempfsf)
             outfile.close()
