@@ -5,9 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changes
+- Working on sub-089, 87 subjects total expected.
+
 ## 2019-03-05 
 ### Added 
-- Added 8 subjects, current subject count: 85 
+- Added 9 subjects, current subject count: 86
 - All 85 subjects have data preprocessed and have run feat1 and feat2 analysis
 
 ### Fixed
