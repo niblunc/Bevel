@@ -6,13 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
+### Changes
+- Working on sub-089, 87 subjects total expected.
 
+## 2019-03-05 
+### Added 
+- Added 9 subjects, current subject count: 86
+- All 85 subjects have data preprocessed and have run feat1 and feat2 analysis
+
+### Fixed
+- sub-081, run-3 files removed for bad volumes, 4 runs available 
+- 4 subjects have three runs available:
+sub-005 - run files removed for bad volumes, 3 files available
 sub-015 - "run-2" removed for bad volume count, 3 files available 
 sub-030 - "run-3" removed for bad volume, 3 files available
-sub-036 - "run-2", "run-3" removed for bad volumes
+sub-036 - run files removed for bad volumes, 3 files available 
   
-## [0.0.1] - 2019-02-11 
+## 2019-02-11 
 ### Added  
 - Complete up to date (no error) subject count: 77 
 - complete DICOM to BIDS data added under ~/Nifti/ directory (90 subjects)
