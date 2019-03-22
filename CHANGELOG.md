@@ -43,6 +43,10 @@ sub-036 - run files removed for bad volumes, 3 files available
 ### Removed
 - sub-023, sub-049, sub-065 are each removed for unrecoverable scans. 
 
+## 2019-03-22
+### Added
+- Design file for Feat1 that separates taste events by expectation (matched vs. prediction error [PE]) and splits "choice" EV into each image pair. 
+
 
 
 
