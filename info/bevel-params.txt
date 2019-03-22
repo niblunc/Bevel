@@ -30,13 +30,18 @@ OUTPUT
 NTPTS
 FUNCRUN
 CONFOUND
-EV1 --img
-EV2 --sweet
-EV3 --bitter
-EV4 --neu
-EV5 --MOCO0
-EV6 --MOCO1
-EV7 --MOCO2
-EV8 --MOCO3
-EV9 --MOCO4
-EV10 --MOCO5
+EV1 --imgAB
+EV2 --imgCD
+EV3 --imgEF
+EV4 --sweet_match
+EV5 --sweet_PE
+EV6 --bitter_match
+EV7 --bitter_PE
+EV8 --Neutral
+EV9 --MOCO0
+EV10 --MOCO1
+EV11 --MOCO2
+EV12 --MOCO3
+EV13 --MOCO4
+EV14 --MOCO5
+
