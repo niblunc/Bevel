@@ -17,4 +17,7 @@ else
 fi
 
 
-singularity exec -B /:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv.simg heudiconv -b -d /test/projects/niblab/bids_projects/Experiments/Bevel/DICOMS/{subject}/*dcm -s sub -f /test/projects/niblab/bids_projects/Experiments/Bevel/Nifti/code/bevel_heuristic.py -c dcm2niix -o /test/projects/niblab/bids_projects/Experiments/Bevel/Nifti
+singularity exec -B /:/base_dir /projects/niblab/bids_projects/Singularity_Containers/heudiconv_05_2019.simg \
+heudiconv -b -d /base_dir/projects/niblab/bids_projects/Experiments/Bevel/DICOMS/sub-{subject}/*dcm -s sub \
+-f /base_dir/projects/niblab/bids_projects/Experiments/Bevel/BIDS/code/bevel_heuristic.py \
+-c dcm2niix -o /base_dir/projects/niblab/bids_projects/Experiments/Bevel/BIDS
