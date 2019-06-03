@@ -50,11 +50,7 @@ def set_paths():
 
 def set_dict(sub):
     main_dict[sub] = { }
-    if not arglist["RUN"]:
-         pass
-    else:
-        for run in arglist["RUN"]:
-            main_dict[sub][run] = {}
+
             
 def make_file(key):
     for run in arglist["RUN"]:
@@ -97,20 +93,18 @@ def make_file(key):
             outfile.close()
         infile.close()
         
-def fill_dict(sub):
-    task = arglist['TASK']
-    print("SUBJECT: %s \t TASK: %s"%(sub, task))
-
-    # -- THE RUNS
-    data_dir = os.path.join(deriv_dir, sub)
-    print("DATA DIR", data_dir)
-
+def fill_dict(sub_path):
+    print("IN METHOD")
+    #task = arglist['TASK']
+    runs = glob.glob(os.path.join(sub_path, "func", "*run*bold_brain.nii.gz"))
+    for run in runs:
+        print(run)
         
     for run in arglist['RUN']:
         x=int(run)
         output=os.path.join(data_dir, 'func', 'Analysis', 'feat1', 'task-%s_run%s'%(task,run))
-        func = os.path.join(deriv_dir, sub, 'func', "%s_task-%s_run-%s_bold_space-MNI152NLin2009cAsym_preproc_brain.nii.gz"%(sub, task, run))
-        confounds=os.path.join(deriv_dir, sub, 'func','motion_assessment','%s_task-%s_run-%s_bold_space-MNI152NLin2009cAsym_preproc_brain_confound.txt'%(sub,task,run))
+        func = os.path.join(deriv_dir, sub, 'func', "%s_task-%s_run-%s_space-MNI152Lin_desc-preproc_bold_brain.nii.gz"%(sub, task, run))
+        confounds=os.path.join(deriv_dir, sub, 'func','motion_assessment','%s_task-%s_run-%s_bold_space-MNI152Lin_desc-preproc_bold_brain_confound.txt'%(sub,task,run))
             
         main_dict[sub][run]['OUTPUT'] = output
         print("OUTPUT: ", output)
@@ -162,14 +156,16 @@ def fill_dict(sub):
 def create_fsf():
     global main_dict
     main_dict= {}
+    deriv_dir = '/projects/niblab/bids_projects/Experiments/Bevel/testing_lin/derivatives'
     for sub_path in glob.glob(os.path.join(deriv_dir, 'sub-*')):
         sub=sub_path.split("/")[-1]
+        #print(sub)
         set_dict(sub)
-        fill_dict(sub)
-        make_file(sub)
+        fill_dict(sub_path)
+        #make_file(sub)
 
 def main():
-    set_parser()
-    set_paths()
+    #set_parser()
+    #set_paths()
     create_fsf()
 main()
