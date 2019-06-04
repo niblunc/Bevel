@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+#SBATCH --job-name=BETA1_BEVEL
+#SBATCH -N 1
+#SBATCH -c 1
+#SBATCH -t 24:00:00
+## %A == SLURM_ARRAY_JOB_ID
+## %a == SLURM_ARRAY_TASK_ID
+#SBATCH -o /projects/niblab/bids_projects/Experiments/Bevel/testing_lin/derivatives/code/feat1/error_files/feat1_beta_bevel_%a_%A_out.txt
+#SBATCH -e /projects/niblab/bids_projects/Experiments/Bevel/testing_lin/derivatives/code/feat1/error_files/feat1_beta_bevel_%a_%A_err.txt
+
+if [ ${SLURM_ARRAY_TASK_ID} -lt 10 ]; then
+    sub="sub-00${SLURM_ARRAY_TASK_ID}"
+else
+    sub="sub-0${SLURM_ARRAY_TASK_ID}"
+fi
+
+FILES=(/projects/niblab/bids_projects/Experiments/Bevel/testing_lin/derivatives/$sub/Analysis/feat1/betaseries/run-*/design_files/*.fsf)
+for f in ${FILES[@]}; do
+    /projects/niblab/modules/software/fsl/5.0.10/bin/feat $f 
+done
