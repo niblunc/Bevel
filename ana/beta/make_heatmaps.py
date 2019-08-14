@@ -3,14 +3,13 @@ import os, import
 
 def make_output(sub_id, corr_mat_path):
     trial_types = ['punish','reward']
+    # setup output filename template 
     filename_template = "{sub_id}_task-prob_run-*_bold_space-MNI152NLin2009cAsym_preproc_trialtype-{trial_type}_matrix.tsv"
-    for trial_type in trial_types:
-        file_path = os.path.join(corr_mat_path, filename_template.format(trial_type=trial_type, sub_id=sub_id))
-        #print(file_path)
-        tsvs=glob.glob(file_path)
-        print("TSV STEP")
-        for tsv in tsvs:
-            run_id = tsv.split("/")[-1].split("_")[2]
+    file_path = os.path.join(corr_mat_path, filename_template.format(trial_type=trial_type, sub_id=sub_id))
+    tsvs=glob.glob(file_path)
+    for tsv in tsvs:
+        run_id = tsv.split("/")[-1].split("_")[2]
+        for trial_type in trial_types:
             fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True, sharey=True, figsize=(10, 30),
             gridspec_kw={'wspace': 0.025, 'hspace': 0.075})
             cbar_ax = fig.add_axes([.91, .3, .03, .4])
@@ -23,11 +22,12 @@ def make_output(sub_id, corr_mat_path):
                 # iterate over rows
                 r += 1
             #plt.tight_layout()
-            plt.savefig(os.path.join(corr_mat_path, "{}_task_heatmap.png".format(run)))
-            print("FINISHED")
+            plt.savefig(os.path.join(corr_mat_path, "{}_task_heatmap.png".format(run_id)))
+    print("FINISHED MAKING HEATMAPS")
             
 # Main Function to initiate 
 def main():
+    print("Gathering subjects...")
     # go through subjects to collect dataframe from tsv and make heatmap
     # need subject, run, and sub path
     dataset = glob.glob("/projects/niblab/bids_projects/Experiments/Bevel/BIDS/sub-*")
@@ -37,4 +37,5 @@ def main():
         sub_id = sub_dir.split("/")[-1]
         # Get path
         corr_mat_path = os.path.join("/projects/niblab/bids_projects/Experiments/Bevel/derivatives", "NiBetaSeries/nibetaseries", sub_id, "func")
-        make_output(sub_id)
+        #get output heatmap
+        make_output(sub_id, corr_mat_path)
