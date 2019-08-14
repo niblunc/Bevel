@@ -19,3 +19,4 @@ FILES=(/projects/niblab/bids_projects/Experiments/Bevel/testing_lin/derivatives/
 for f in ${FILES[@]}; do
     /projects/niblab/modules/software/fsl/5.0.10/bin/feat $f 
 done
+
