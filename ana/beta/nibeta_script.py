@@ -27,10 +27,7 @@ warnings.filterwarnings("ignore", category=ResourceWarning)
 
 
 # call nibs
-def run_nibeta(_dict, data):
-    sub_string = ' '.join(data)
-    print(sub_string)
-    
+def run_nibeta(_dict, data):    
     for sub_id in sorted(data):
         cmd = """\
         nibs {bids_dir} fmriprep {out_dir} participant \
@@ -46,6 +43,7 @@ def run_nibeta(_dict, data):
            work_dir=_dict['work_dir'])
         print("CMD: \n{}".format(cmd))
         
+        print("RUNNING SUBJECT: ", sub_id)
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
 
         while True:
@@ -53,9 +51,8 @@ def run_nibeta(_dict, data):
             if not line:
                 break
             print(line)
-    print("FINISHED SET: \n{}".format(data))
 
-
+        
     
 
 
@@ -72,8 +69,9 @@ def main():
     work_dir = os.path.join(out_dir, "work_dir")
     atlas_mni_file = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_MNI152_3mm_origOrder.nii")
     atlas_tsv = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_order_new.tsv")
-        
-    dataset = [x.split('/')[-1] for x in glob.glob(os.path.join(data_dir, 'sub-*'))]
+    
+    dataset =  ['sub-001', 'sub-002', 'sub-003', 'sub-004', 'sub-005', 'sub-006', 'sub-007', 'sub-008', 'sub-009', 'sub-010', 'sub-012', 'sub-013', 'sub-014', 'sub-015', 'sub-018', 'sub-022', 'sub-025', 'sub-030', 'sub-031', 'sub-032', 'sub-034', 'sub-035', 'sub-036', 'sub-037', 'sub-038', 'sub-039', 'sub-042', 'sub-043', 'sub-044', 'sub-045', 'sub-046', 'sub-048', 'sub-050', 'sub-056', 'sub-058', 'sub-061', 'sub-062', 'sub-063', 'sub-064', 'sub-065', 'sub-066', 'sub-067', 'sub-068', 'sub-069', 'sub-070', 'sub-071', 'sub-072', 'sub-073', 'sub-075', 'sub-076', 'sub-077', 'sub-079', 'sub-080', 'sub-081', 'sub-082', 'sub-083', 'sub-084', 'sub-085', 'sub-086', 'sub-089', 'sub-090']
+    #dataset = [x.split('/')[-1] for x in glob.glob(os.path.join(data_dir, 'sub-*'))]
     dataset = sorted(dataset)
     
     dataset = [x.split("-")[1] for x in dataset]
