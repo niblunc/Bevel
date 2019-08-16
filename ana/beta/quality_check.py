@@ -21,7 +21,7 @@ for beta_dir in subjects:
         sub_err_list.append(sub_id)
         
         
-n=6
+n=10
 chunks = [sub_err_list[i * n:(i + 1) * n] for i in range((len(sub_err_list) + n - 1) // n )]  
 for i,chunk in enumerate(chunks):
     print("Chunk {}: \n{}".format(i,' '.join(chunk)))
