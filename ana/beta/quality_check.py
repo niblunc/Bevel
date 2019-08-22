@@ -15,7 +15,7 @@ for beta_dir in subjects:
     tsvs = glob.glob(os.path.join(beta_dir, "func/*.tsv"))
     runs = [x.split("/")[-1].split("_")[2] for x in tsvs]
     #print("RUNS : {} ".format(' '.join(runs)))
-    if len(runs) != 8:
+    if len(runs) < 6:
         print("CHECK SUBJECT: \n{}".format(beta_dir.split("/")[-1]))
         print("RUNS PRODUCED: \n{} ".format(' '.join(runs)))
         sub_err_list.append(sub_id)

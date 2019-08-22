@@ -1,7 +1,7 @@
 import glob
 import os
-DER_DIR = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives"
-SUB_DIR = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/sub-*"
+DER_DIR = "/projects/niblab/bids_projects/Experiments/Bevel/remake_space/derivatives"
+SUB_DIR = "/projects/niblab/bids_projects/Experiments/Bevel/remake_space/derivatives/sub-*"
 SUB_DIRS = glob.glob(SUB_DIR)
 
 for sub in SUB_DIRS:

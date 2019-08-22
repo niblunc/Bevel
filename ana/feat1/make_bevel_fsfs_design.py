@@ -97,12 +97,10 @@ def fill_dict(sub_path):
     print("IN METHOD")
     #task = arglist['TASK']
     runs = glob.glob(os.path.join(sub_path, "func", "*run*bold_brain.nii.gz"))
-    for run in runs:
-        print(run)
         
     for run in arglist['RUN']:
         x=int(run)
-        output=os.path.join(data_dir, 'func', 'Analysis', 'feat1', 'task-%s_run%s'%(task,run))
+        output=os.path.join(data_dir, 'func', 'Analysis', 'feat1', 'task-%s_run-%s'%(task,run))
         func = os.path.join(deriv_dir, sub, 'func', "%s_task-%s_run-%s_space-MNI152Lin_desc-preproc_bold_brain.nii.gz"%(sub, task, run))
         confounds=os.path.join(deriv_dir, sub, 'func','motion_assessment','%s_task-%s_run-%s_bold_space-MNI152Lin_desc-preproc_bold_brain_confound.txt'%(sub,task,run))
             
