@@ -44,3 +44,7 @@ for subj_dir in sorted(subjs_dirs):
         new_df.to_csv(newfile, sep="\t", na_rep="n/a", index=False)
         # remove original files:
         #os.remove(event_file)
+        
+df = pd.read_csv("/projects/niblab/bids_projects/Experiments/Bevel/BIDS/sub-001/func/sub-001_task-prob_run-1_events.tsv", sep='\t')
+
+correct=['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y']

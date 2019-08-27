@@ -29,14 +29,14 @@ data_dir = '/projects/niblab/bids_projects/Experiments/Bevel/BIDS' #RENCI PATH
 #data_dir = '/Users/nikkibytes/Documents/niblunc/testing_beta' #LOCAL PATH
 print('Our working directory: {}'.format(data_dir))
 
-out_dir = os.path.join(data_dir, "derivatives")
-work_dir = os.path.join(out_dir, "work_dir")
-atlas_mni_file = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_MNI152_3mm_origOrder.nii")
+out_dir = os.path.join(data_dir, "derivatives/testing-space")
+work_dir = os.path.join(out_dir, "wf_")
+atlas_mni_file = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_MNI152_3mm_origOrder.nii") #WashU_300rois_MNI152Asymm_3mm_origOrder.nii
 atlas_tsv = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_order_new.tsv")
 
 
 
-subs=['sub-035']
+subs=['sub-004']
 subs = [x.split("-")[1] for x in subs]
 
 
@@ -50,13 +50,13 @@ for sub in subs:
         participant \
         --participant_label {sub} \
         -sm 6 \
-        -t prob \
+        --run_label 1 \
         -c CSF FramewiseDisplacement X Y Z RotX RotY RotZ \
         -sp MNI152NLin2009cAsym \
         -w {work_dir} \
         -a {atlas_mni_file} \
         -l {atlas_tsv} \
-        --nthreads 16
+        --nthreads 10
         """.format(atlas_mni_file=atlas_mni_file,
            atlas_tsv=atlas_tsv,
            sub=sub,
@@ -64,6 +64,9 @@ for sub in subs:
            out_dir=out_dir,
            work_dir=work_dir)
 
+        print("COMMAND: \n{}".format(cmd))
+        
+        
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
 
         while True:
