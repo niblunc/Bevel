@@ -31,7 +31,7 @@ print('Our working directory: {}'.format(data_dir))
 
 out_dir = os.path.join(data_dir, "derivatives/testing-space")
 work_dir = os.path.join(out_dir, "wf_")
-atlas_mni_file = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_MNI152_3mm_origOrder.nii") #WashU_300rois_MNI152Asymm_3mm_origOrder.nii
+atlas_mni_file = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_MNI152Asymm_3mm_origOrder.nii") #WashU_300rois_MNI152Asymm_3mm_origOrder.nii
 atlas_tsv = os.path.join(data_dir, "derivatives", "parcellations", "WashU_300rois_order_new.tsv")
 
 
@@ -50,7 +50,6 @@ for sub in subs:
         participant \
         --participant_label {sub} \
         -sm 6 \
-        --run_label 1 \
         -c CSF FramewiseDisplacement X Y Z RotX RotY RotZ \
         -sp MNI152NLin2009cAsym \
         -w {work_dir} \
