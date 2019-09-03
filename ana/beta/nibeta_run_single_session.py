@@ -51,7 +51,7 @@ for sub in subs:
         {out_dir} \
         participant \
         --participant_label {sub} \
-        -t all \
+        -t runs \
         -sm 6 \
         -c CSF FramewiseDisplacement X Y Z RotX RotY RotZ \
         -sp MNI152NLin2009cAsym \
