@@ -1,0 +1,2 @@
+#!/bin/bash
+fslmeants -i /projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/concatenated/sub-001_reward.nii.gz -o /projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/timeseries/sub-001_reward_roi71.txt -c -36 2 4 --usemm 
