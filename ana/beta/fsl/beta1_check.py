@@ -2,6 +2,7 @@ import os, glob
 import pandas as pd
 
 beta_dict={}
+rerun_subs = []
 
 subs=glob.glob(os.path.join('/projects/niblab/bids_projects/Experiments/Bevel/derivatives', 'sub-*'))
 for sub in sorted(subs):
@@ -10,8 +11,6 @@ for sub in sorted(subs):
         beta_dict[sub_id] = {}
     feat_dirs = glob.glob(os.path.join(sub,"func/Analysis/feat1/betaseries/run-*/*_run-*_trial-*.feat/stats"))
     total_trial_ct = len(feat_dirs)
-    if total_trial_ct == 0:
-        print("\n*ID: {} \tTrial Count: {}".format(sub_id, total_trial_ct))
     beta_dict[sub_id]["TOTAL_TRIALS_CT"] = total_trial_ct
     run1_trials=[x for x in feat_dirs if x.split('/')[-3] == "run-1"]
     run2_trials=[x for x in feat_dirs if x.split('/')[-3] == "run-2"]
@@ -25,6 +24,15 @@ for sub in sorted(subs):
     beta_dict[sub_id]["RUN2_TRIALS_CT"] = run2_trial_ct
     beta_dict[sub_id]["RUN3_TRIALS_CT"] = run3_trial_ct
     beta_dict[sub_id]["RUN4_TRIALS_CT"] = run4_trial_ct
-    
+    if total_trial_ct == 0:
+        print("\n*ID: {} \tTrial Count: {}".format(sub_id, total_trial_ct))
+        rerun_subs.append(sub_id)
+        
 df=pd.DataFrame(beta_dict)
 df=df.T
+
+zero1=df["RUN1_TRIALS_CT"] == 0
+zero2=df["RUN2_TRIALS_CT"] == 0
+zero3=df["RUN3_TRIALS_CT"] == 0
+zero4=df["RUN4_TRIALS_CT"] == 0
+zero_df = df[zero1 | zero2 | zero3 | zero4]
