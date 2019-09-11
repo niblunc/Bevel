@@ -35,4 +35,16 @@ zero1=df["RUN1_TRIALS_CT"] == 0
 zero2=df["RUN2_TRIALS_CT"] == 0
 zero3=df["RUN3_TRIALS_CT"] == 0
 zero4=df["RUN4_TRIALS_CT"] == 0
+notzero1=df["RUN1_TRIALS_CT"] != 0
+notzero2=df["RUN2_TRIALS_CT"] != 0
+notzero3=df["RUN3_TRIALS_CT"] != 0
+notzero4=df["RUN4_TRIALS_CT"] != 0
+
 zero_df = df[zero1 | zero2 | zero3 | zero4]
+notzero_df1 =  df[notzero1 & notzero2 & notzero3 & notzero4]
+notzero_df2 =  df[notzero1 & notzero2 & notzero3 | notzero4]
+notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
+
+
+# list of subjects with trials done for all 4 runs - 
+four_runs_list = notzero_df1.index.tolist()
