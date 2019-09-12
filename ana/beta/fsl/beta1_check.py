@@ -48,3 +48,5 @@ notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
 
 # list of subjects with trials done for all 4 runs - 
 four_runs_list = notzero_df1.index.tolist()
+
+df.to_csv("trial_count.csv", sep="\t")

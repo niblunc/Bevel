@@ -31,7 +31,8 @@ def pull_timeseries():
             #print("Output file being made: {}".fomrat(out_path))
             cmd='fslmeants -i {} -o {} -c {} {} {} --usemm \n\n'.format(nifti, out_path, x, y, z)
             print("Running shell command: {}".format(cmd))
-pull_timeseries()
+            #subprocess.run(cmd, shell=True)
+#pull_timeseries()
 
 
 # *************************************************************************************
@@ -40,17 +41,40 @@ pull_timeseries()
 
 # *************************************************************************************
 
-    
+def concat_runs(nifti_files, outdir):
+    dict_ = {}
+    for nifti in sorted(nifti_files):
+        #print(nifti)
+        sub_id = nifti.split("/")[-1].split("_")[0]
+        if sub_id not in dict_:
+            dict_[sub_id] = { "reward": [], "punish": [] }
+        if "reward" in nifti:
+            dict_[sub_id]["reward"].append(nifti)
+        else:
+            dict_[sub_id]["punish"].append(nifti)
+    #print(dict_)
+    for sub_id in dict_:
+        reward_outfile = os.path.join(outdir, "{}_{}".format(sub_id, "reward"))
+        punish_outfile = os.path.join(outdir, "{}_{}".format(sub_id, "punish"))
+        reward_niftis=dict_[sub_id]["reward"]
+        punish_niftis=dict_[sub_id]["punish"]
+        #/projects/niblab/modules/software/fsl/5.0.10/bin/
+        reward_cmd = "/usr/local/fsl/bin/fslmerge -t {} {} ".format(reward_outfile, ' '.join(reward_niftis))
+        punish_cmd =  "/usr/local/fsl/bin/fslmerge -t {} {}".format(punish_outfile, ' '.join(punish_niftis))
+        print("RUNNING COMMANDS........\nREWARD COMMAND: {} \nPUNISH COMMAND: {}".format(reward_cmd,punish_cmd))
+        subprocess.run(reward_cmd, shell=True)
+        subprocess.run(punish_cmd, shell=True)
+        print("Completed merging subject runs.")
+
+
+
 # local output directory
-def concat_runs(files, trial_dict, sub_dirs):
+def concat_trials(files, trial_dict, output_dir):
     #print(sub_dirs)
-    output_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/concatenated_1/by_run"
+    
     os.chdir(output_dir)
-    for sub_dir in sub_dirs:
-        pe1_files=glob.glob(os.path.join(sub_dir, ))
-        
-    """
     # make individual files
+    
     for file in files:
         sub=file.split('/')[7].split('_')[0]
         run=file.split('/')[7].split('_')[1]
@@ -95,21 +119,14 @@ def concat_runs(files, trial_dict, sub_dirs):
     print("Completed making individual run files.")
     
 
-basepath='/projects/niblab/bids_projects/Experiments/Bevel'
+basepath='/Users/nikkibytes/Documents/niblunc/data/runs'#'/projects/niblab/bids_projects/Experiments/Bevel'
 trialpath='/projects/niblab/bids_projects/Experiments/Bevel/trial_logs'
+output_dir = "/Users/nikkibytes/Documents/niblunc/data/output"
 #os.chdir(basepath)
 text_files = glob.glob(os.path.join(trialpath,'sub*.txt'))
 good_subs=['sub-001',
- 'sub-002',
- 'sub-003',
- 'sub-004',
- 'sub-006',
- 'sub-007',
- 'sub-009',
- 'sub-010',
- 'sub-012',
- 'sub-014',
- 'sub-016',
+ 'sub-002', 'sub-003', 'sub-004', 'sub-006', 'sub-007', 'sub-009', 'sub-010',
+ 'sub-012', 'sub-014', 'sub-016',
  'sub-017',
  'sub-018',
  'sub-019',
@@ -142,8 +159,10 @@ good_subs=['sub-001',
  'sub-064']
 
 files = [x for x in text_files if x.split("/")[-1].split("_")[0] in good_subs]
-sub_dirs=glob.glob(os.path.join(basepath, "derivatives/sub-*/func/Analysis/feat1/betaseries"))
+
 files=sorted(files)
 trial_dict = {}
-concat_runs(files, trial_dict, sub_dirs)
+#concat_trials(files, trial_dict, output_dir)
+nifti_run_files=glob.glob(os.path.join(basepath, "*.nii.gz"))#"derivatives/betaseries/concatenated_1/by_run/*nii.gz"))
+concat_runs(nifti_run_files, output_dir)
 #timeseries_pull()

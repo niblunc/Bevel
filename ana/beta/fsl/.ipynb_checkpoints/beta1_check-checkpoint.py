@@ -9,7 +9,7 @@ for sub in sorted(subs):
     sub_id = sub.split("/")[-1]
     if sub_id not in beta_dict:
         beta_dict[sub_id] = {}
-    feat_dirs = glob.glob(os.path.join(sub,"func/Analysis/betaseries/run-*/*_run-*_trial-*.feat/stats"))
+    feat_dirs = glob.glob(os.path.join(sub,"func/Analysis/feat1/betaseries/run-*/*_run-*_trial-*.feat/stats"))
     total_trial_ct = len(feat_dirs)
     beta_dict[sub_id]["TOTAL_TRIALS_CT"] = total_trial_ct
     run1_trials=[x for x in feat_dirs if x.split('/')[-3] == "run-1"]
@@ -48,3 +48,5 @@ notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
 
 # list of subjects with trials done for all 4 runs - 
 four_runs_list = notzero_df1.index.tolist()
+
+df.to_csv("trial_count.csv", sep="\t")
