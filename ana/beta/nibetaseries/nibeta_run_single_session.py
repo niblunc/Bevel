@@ -25,14 +25,15 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=UserWarning) 
 warnings.filterwarnings("ignore", category=ResourceWarning) 
 
-data_dir = '/projects/niblab/bids_projects/Experiments/Bevel/BIDS' #RENCI PATH
+data_dir = "/projects/niblab/bids_projects/Experiments/Bevel/remake_space/test/" #RENCI PATH
 #data_dir = '/Users/nikkibytes/Documents/niblunc/testing_beta' #LOCAL PATH
 print('Our working directory: {}'.format(data_dir))
 
-out_dir = os.path.join(data_dir, "derivatives/testing-space/concat")
+
+out_dir = os.path.join(data_dir, "derivatives/testing-space/yeo_roi_new_data")
 work_dir = os.path.join(out_dir, "wf_")
-atlas_mni_file = os.path.join(data_dir, "derivatives", "parcellations", "betaseries_bb300_3mm_30rois.nii.gz") #WashU_300rois_MNI152Asymm_3mm_origOrder.nii
-atlas_tsv = os.path.join(data_dir, "derivatives", "parcellations", "reduced_ROI_lst.tsv")
+atlas_mni_file = os.path.join(data_dir, "derivatives", "parcellations", "Yeo2011_7Networks_MNI152_FreeSurferConformed1mm.nii.gz") #WashU_300rois_MNI152Asymm_3mm_origOrder.nii
+atlas_tsv = os.path.join(data_dir, "derivatives", "parcellations", "Yeo2011_7Networks_ColorLUT_edit.tsv")
 
 
 
@@ -51,7 +52,7 @@ for sub in subs:
         {out_dir} \
         participant \
         --participant_label {sub} \
-        -t runs \
+        -t prob --run_label 1 \
         -sm 6 \
         -c CSF FramewiseDisplacement X Y Z RotX RotY RotZ \
         -sp MNI152NLin2009cAsym \
