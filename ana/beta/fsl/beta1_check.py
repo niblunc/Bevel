@@ -50,3 +50,4 @@ notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
 four_runs_list = notzero_df1.index.tolist()
 
 df.to_csv("trial_count.csv", sep="\t")
+zero_df.to_csv("zero_trials.csv", sep="\t")
