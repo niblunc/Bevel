@@ -40,7 +40,7 @@ notzero2=df["RUN2_TRIALS_CT"] != 0
 notzero3=df["RUN3_TRIALS_CT"] != 0
 notzero4=df["RUN4_TRIALS_CT"] != 0
 
-zero_df = df[zero1 | zero2 | zero3 | zero4]
+zero_df = df[zero1 & zero2 & zero3 & zero4]
 notzero_df1 =  df[notzero1 & notzero2 & notzero3 & notzero4]
 notzero_df2 =  df[notzero1 & notzero2 & notzero3 | notzero4]
 notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
