@@ -40,7 +40,12 @@ notzero2=df["RUN2_TRIALS_CT"] != 0
 notzero3=df["RUN3_TRIALS_CT"] != 0
 notzero4=df["RUN4_TRIALS_CT"] != 0
 
+<<<<<<< HEAD
 zero_df = df[zero1 & zero2 & zero3 & zero4]
+=======
+all_zero_df = df[zero1 & zero2 & zero3 & zero4]
+zero_df = df[zero1 | zero2 | zero3 | zero4]
+>>>>>>> e071f4bba980aa33cb29c6a05eca60b28c808194
 notzero_df1 =  df[notzero1 & notzero2 & notzero3 & notzero4]
 notzero_df2 =  df[notzero1 & notzero2 & notzero3 | notzero4]
 notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
@@ -50,4 +55,4 @@ notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
 four_runs_list = notzero_df1.index.tolist()
 
 df.to_csv("trial_count.csv", sep="\t")
-zero_df.to_csv("zero_trials.csv", sep="\t")
+all_zero_df.to_csv("zero_trials.csv", sep="\t")
