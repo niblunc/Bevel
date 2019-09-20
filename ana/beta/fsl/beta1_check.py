@@ -51,10 +51,9 @@ notzero2=df["RUN2_TRIALS_CT"] != 0
 notzero3=df["RUN3_TRIALS_CT"] != 0
 notzero4=df["RUN4_TRIALS_CT"] != 0
 
-<<<<<<< HEAD
-=======
+
 zero_df = df[zero1 & zero2 & zero3 & zero4]
->>>>>>> dff086e4e2a9b1f317fdfc3b16bee82eed9d3ab4
+
 all_zero_df = df[zero1 & zero2 & zero3 & zero4]
 zero_df = df[zero1 | zero2 | zero3 | zero4]
 notzero_df1 =  df[notzero1 & notzero2 & notzero3 & notzero4]
@@ -73,6 +72,6 @@ for x in sorted(missing_runs_list):
     df_mia[x] = df_T[x]
 df_mia.sort_index(axis=1, inplace=True)
 
-df_mia.T.to_csv("inspect_runs.csv", sep="\t")
+df_mia.T.to_csv("inspect.csv", sep="\t")
 df.to_csv("trial_count.csv", sep="\t")
 all_zero_df.to_csv("zero_trials.csv", sep="\t")
