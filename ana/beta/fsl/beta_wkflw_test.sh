@@ -1,0 +1,1 @@
+python beta_setup.py -roi -ts -tpath /projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/trial_logs -nii_path /projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/niftis 
