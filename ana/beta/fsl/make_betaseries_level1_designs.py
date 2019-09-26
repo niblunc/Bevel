@@ -6,11 +6,12 @@ import re
         
 
 def make_file(sub_id, run, trial_id, output_dir):
-    with open(os.path.join(deriv_dir,'design_files/level1_betaseries.fsf'),'r') as infile:
+    with open(os.path.join(deriv_dir,'design_files/beta1_v2_design.fsf'),'r') as infile:
         tempfsf=infile.read()
         if not os.path.exists(os.path.join(output_dir, "design_files")):
             os.makedirs(os.path.join(output_dir, "design_files"))
-        design_fileout = os.path.join(output_dir, "design_files/%s_run-%s_trial-%s_design1.fsf"%(sub_id, run, trial_id))
+        design_fileout = os.path.join(output_dir, "design_files/%s_run-%s_trial-%s_design1_rinse.fsf"%(sub_id, run, trial_id))
+        print("Making file {}.........\n".format(design_fileout))
         # SET PARAMS 
         out_param = _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id]["OUTPUT"]
         func_param = _dict[sub_id][run]["FUNCRUN"]
@@ -58,7 +59,7 @@ def create_fsf():
         set_dict(sub_id)
         for run in RUNS: # SECOND LOOP -- looping through RUNS
             # MAKE/SET OUTPUT DIRECTORY
-            output_dir = os.path.join(sub_path, "func/Analysis/feat1/betaseries/run-%s"%run)
+            output_dir = os.path.join(sub_path, "func/Analysis/beta/run-%s"%run)
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
             # GET INPUT FILE 
@@ -74,17 +75,20 @@ def create_fsf():
                 motcor=os.path.join(sub_path, 'func','motion_assessment', 'motion_parameters','%s_task-prob_run-%s_moco%s.txt'%(sub_id, run,i))
                 _dict[sub_id][run]['MOCO%i'%i] = motcor
             # GET TRIALS 
-            subj_trials = sorted(glob.glob(os.path.join(sub_path, "func", "onsets", "bevel*run0%s*trial*.txt"%run)))
+            bevel_id = sub_id.replace("sub-0", "bevel")
+            subj_trials = sorted(glob.glob(os.path.join(sub_path, "func", "onsets", "bevel*run0%s*rinse*trial*.txt"%run)))
             if not subj_trials:
                 pass
             else:
+                # Get NUIS condition files
                 for trial_file in subj_trials:
                     _id = sub_id.split("-")[1]
                     _id = _id[1:]
-                    trial_id = trial_file.split("/")[-1].split(".")[0].split("_")[2].split("l")[1]
-                    nuis_file = os.path.join(sub_path, "func", "onsets", "bevel%s_run0%s_nuis%s.txt"%(_id, run, trial_id))
-                    fileout = os.path.join(output_dir, "%s_run-%s_trial-%s"%(sub_id, run, trial_id))
-                    _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id] = {"TRIAL" : trial_file, "NUIS": nuis_file, "OUTPUT" : fileout}
+                    trial_id = trial_file.split("/")[-1].split(".")[0].split("_")[3].split("l")[1]
+                    #print(trial_id)
+                    nuis_file = os.path.join(sub_path, "func", "onsets", "bevel%s_run0%s_rinse_nuis%s.txt"%(_id, run, trial_id))
+                    output_path = os.path.join(output_dir, "%s_run-%s_rinse-%s"%(sub_id, run, trial_id))
+                    _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id] = {"TRIAL" : trial_file, "NUIS": nuis_file, "OUTPUT" : output_path}
                     make_file(sub_id, run, trial_id,output_dir) 
 def set_paths():
     global input_dir
