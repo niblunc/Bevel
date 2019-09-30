@@ -28,7 +28,23 @@ def timeseries_concat(stim_id):
     inpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_roi".format(stim_id)
     outpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_sub".format(stim_id)
     roi_dir = glob.glob(os.path.join(inpath, "*.txt"))
+    #print(roi_dir)
+    
     for roi_file in sorted(roi_dir):
+        sub_id = roi_file.split("/")[-1].split("_")[0]
+        if sub_id not in roi_dict:
+            roi_dict[sub_id] = {stim_id:[]}
+        roi_df = pd.read_csv(roi_file, sep="\n", header=None)
+        roi_dict[sub_id][stim_id].append(roi_df)
+        #print(roi_dict)
+    for sub_id in roi_dict:
+        file_outpath = os.path.join(outpath, "{}_{}.txt".format(sub_id, stim_id))
+        concat_df = pd.concat(roi_dict[sub_id][stim_id], axis=1, sort=False)
+        print("Writing files..... \n{} \n".format(file_outpath))
+        concat_df.to_csv(file_outpath, header=None, index=None, sep="\t")
+        
+        
+    """for roi_file in sorted(roi_dir):
         #print(roi_file)
         sub_id = roi_file.split("/")[-1].split("_")[0]
         condition = roi_file.split("/")[-1].split("_")[1]
@@ -51,36 +67,12 @@ def timeseries_concat(stim_id):
         #print(final_reward_df.head())
         print("Writing files..... \n{} \n and ....... \n{}".format(reward_outpath, punish_outpath))
         #final_reward_df.to_csv(reward_outpath, header=None, index=None, sep="\t")
-        #final_punish_df.to_csv(punish_outpath, header=None, index=None, sep="\t")
-    print("Completed making timeseries")
+        #final_punish_df.to_csv(punish_outpath, header=None, index=None, sep="\t")"""
+    print("Completed making by-subject timeseries")
     #print(roi_dict)
     
     
-def fslmeants_run(nifti):
-    # get nifti files
-    stim_id = nifti.split("/")[-1].split("_")[2].split(".")[0]
-    out_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_roi".format(stim_id)
-    # split
-    beta_text_file = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/betaseries_rois.txt"
-    df = pd.read_csv(beta_text_file, sep="\t")
-    df_T = df.T
-    #print(df.head())
-    #for nifti in sorted(file_list):
-    sub_id = nifti.split("/")[-1].split("_")[0]
-    sub_condition=nifti.split("/")[-1].split("_")[1].split(".")[0]
-    #print(sub_id, sub_condition)
-    for index in df.index.values:
-        roi = df.iloc[index, 0]
-        x = df.iloc[index, 1]
-        y = df.iloc[index, 2]
-        z = df.iloc[index, 3]
-        #print(region,x,y,z)
-        out_path = os.path.join(out_dir, "{}_{}_{}.txt".format(sub_id, sub_condition, roi))
-        #print("Output file being made: {}".fomrat(out_path))
-        cmd='fslmeants -i {} -o {} -c {} {} {} --usemm \n\n'.format(nifti, out_path, x, y, z)
-        print("Running shell fslmeants command X for nifit: {}".format(nifti))
-        subprocess.run(cmd, shell=True)
-        
+
 
 
 
@@ -150,6 +142,33 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id, subjects):
         subprocess.run(punish_cmd, shell=True)"""
     
     
+def fslmeants_run(nifti):
+    print(nifti)
+    # get nifti files
+    stim_id = nifti.split("/")[-1].split("_")[1].split(".")[0]
+    out_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_roi".format(stim_id)
+    # split
+    beta_text_file = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/betaseries_rois.txt"
+    df = pd.read_csv(beta_text_file, sep="\t")
+    df_T = df.T
+    #print(df.head())
+    #for nifti in sorted(file_list):
+    sub_id = nifti.split("/")[-1].split("_")[0]
+    sub_condition=nifti.split("/")[-1].split("_")[1].split(".")[0]
+    #print(sub_id, sub_condition)
+    for index in df.index.values:
+        roi = df.iloc[index, 0]
+        x = df.iloc[index, 1]
+        y = df.iloc[index, 2]
+        z = df.iloc[index, 3]
+        #print(region,x,y,z)
+        out_path = os.path.join(out_dir, "{}_{}_{}.txt".format(sub_id, sub_condition, roi))
+        #print("Output file being made: {}".fomrat(out_path))
+        cmd='fslmeants -i {} -o {} -c {} {} {} --usemm \n\n'.format(nifti, out_path, x, y, z)
+        print("Running shell fslmeants command X for roi {} on file: {}".format(roi, nifti.split("/")[-1]))
+        subprocess.run(cmd, shell=True)
+        
+    
     
 def main(): 
     args = set_parser()
@@ -170,7 +189,7 @@ def main():
     # get only the text files of the subjects found in good subs 
     files = [x for x in text_files if x.split("/")[-1].split("_")[0] in good_subs]
     files=sorted(files)
-    fslmerge_run(files, trial_dict, nii_out, stim_id, good_subs)
+    #fslmerge_run(files, trial_dict, nii_out, stim_id, good_subs)
     if args.fslmerge == True:
         print("Starting fslmerge function....")
         fslmerge_run(files, trial_dict, nii_out, stim_id)
@@ -178,7 +197,7 @@ def main():
     print("Starting fslmeants function....")
     file_list = glob.glob(os.path.join(nii_out, 'sub-0*{}*.nii.gz'.format(stim_id)))
     print("We have {} nifti files.".format(len(file_list)))
-    #pool = Pool(processes=16)
+    #pool = Pool(processes=2)
     #pool.map(fslmeants_run, file_list)
-    #timeseries_concat(stim_id)
+    timeseries_concat(stim_id)
 main()
