@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH --job-name=BETA_BEVEL
+#SBATCH -t 24:00:00
+## %A == SLURM_ARRAY_JOB_ID
+## %a == SLURM_ARRAY_TASK_ID
+#SBATCH -o /projects/niblab/bids_projects/Experiments/Bevel/error_files/beta1_bevel_%a_%A_out.txt
+#SBATCH -e /projects/niblab/bids_projects/Experiments/Bevel/error_files/beta1_bevel_%a_%A_err.txt
+
+
+~/anaconda3/bin/python /projects/niblab/bids_projects/Experiments/Bevel/derivatives/code/beta_v1.py
+

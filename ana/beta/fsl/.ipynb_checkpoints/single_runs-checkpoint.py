@@ -2,6 +2,7 @@ import glob, os
 import pandas as pd
 import subprocess
 import argparse
+from multiprocessing import Pool
 
 def set_parser():
     global parser
@@ -22,20 +23,52 @@ def set_parser():
 
     return args
 
-def pull_timeseries(nifti):
-    # get nifti files
-    out_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/by_roi"
-
-    # split
+def timeseries_concat(stim_id):
+    roi_dict = {}
+    inpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_roi".format(stim_id)
+    outpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_sub".format(stim_id)
+    roi_dir = glob.glob(os.path.join(inpath, "*.txt"))
+    for roi_file in sorted(roi_dir):
+        #print(roi_file)
+        sub_id = roi_file.split("/")[-1].split("_")[0]
+        condition = roi_file.split("/")[-1].split("_")[1]
+        #print(sub_id)
+        if sub_id not in roi_dict:
+            roi_dict[sub_id] = {"reward_rois" : [], "punish_rois": []}
+        roi_df = pd.read_csv(roi_file, sep="\n", header=None)
+        if condition == "reward":
+            roi_dict[sub_id]["reward_rois"].append(roi_df)
+        else:
+            roi_dict[sub_id]["punish_rois"].append(roi_df)
+    #print(roi_dict)
+    for sub_id in roi_dict:
+        reward_outpath = os.path.join(outpath, "{}_reward.txt".format(sub_id))
+        punish_outpath = os.path.join(outpath, "{}_punish.txt".format(sub_id))
+        reward_dataframes=roi_dict[sub_id]['reward_rois']
+        punish_dataframes=roi_dict[sub_id]['punish_rois']
+        final_reward_df = pd.concat(reward_dataframes, axis=1, sort=False)
+        final_punish_df = pd.concat(punish_dataframes, axis=1, sort=False)
+        #print(final_reward_df.head())
+        print("Writing files..... \n{} \n and ....... \n{}".format(reward_outpath, punish_outpath))
+        #final_reward_df.to_csv(reward_outpath, header=None, index=None, sep="\t")
+        #final_punish_df.to_csv(punish_outpath, header=None, index=None, sep="\t")
+    print("Completed making timeseries")
+    #print(roi_dict)
     
+    
+def fslmeants_run(nifti):
+    # get nifti files
+    stim_id = nifti.split("/")[-1].split("_")[2].split(".")[0]
+    out_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_roi".format(stim_id)
+    # split
     beta_text_file = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/betaseries_rois.txt"
     df = pd.read_csv(beta_text_file, sep="\t")
     df_T = df.T
-    print(df.head())
+    #print(df.head())
     #for nifti in sorted(file_list):
     sub_id = nifti.split("/")[-1].split("_")[0]
     sub_condition=nifti.split("/")[-1].split("_")[1].split(".")[0]
-    print(sub_id, sub_condition)
+    #print(sub_id, sub_condition)
     for index in df.index.values:
         roi = df.iloc[index, 0]
         x = df.iloc[index, 1]
@@ -45,19 +78,19 @@ def pull_timeseries(nifti):
         out_path = os.path.join(out_dir, "{}_{}_{}.txt".format(sub_id, sub_condition, roi))
         #print("Output file being made: {}".fomrat(out_path))
         cmd='fslmeants -i {} -o {} -c {} {} {} --usemm \n\n'.format(nifti, out_path, x, y, z)
-        print("Running shell command: {}".format(cmd))
+        print("Running shell fslmeants command X for nifit: {}".format(nifti))
         subprocess.run(cmd, shell=True)
+        
 
 
 
-def concat_trials(files, trial_dict, nii_out, stim_id):
+def fslmerge_run(files, trial_dict, nii_out, stim_id):
     for file in files:
         sub=file.split('/')[-1].split('_')[0]
         run=file.split('/')[-1].split('_')[1]
         #print([sub,run])
         if sub not in trial_dict:
             trial_dict[sub] = {"REWARD_FILES": [], "PUNISH_FILES": []}
-    
         trial_dict[sub][run] = {}
     
         df = pd.read_csv(file, sep="\t", header=None)
@@ -129,16 +162,15 @@ def main():
     # get only the text files of the subjects found in good subs 
     files = [x for x in text_files if x.split("/")[-1].split("_")[0] in good_subs]
     files=sorted(files)
-    concat_trials(files, trial_dict, nii_out, stim_id)
-    """if args.fslmerge == True:
+    #fslmerge_run(files, trial_dict, nii_out, stim_id)
+    if args.fslmerge == True:
         print("Starting fslmerge function....")
-        concat_trials(files, trial_dict, nii_out, stim_id)
-    if args.fslmeants == True:
-        print("Starting fslmeants function....")
-        nifti_run_files=glob.glob(os.path.join(nii_outpath, "*.nii.gz"))
-        file_list = glob.glob(os.path.join(nii_out, 'sub-0*{}*.nii.gz'.format(stim_id)))
-        print("We have {} nifti files.".format(len(file_list)))
-        pool = Pool(processes=16)
-        pool.map(pull_timeseries, file_list)"""
-        
+        fslmerge_run(files, trial_dict, nii_out, stim_id)
+    #if args.fslmeants == True:
+    print("Starting fslmeants function....")
+    file_list = glob.glob(os.path.join(nii_out, 'sub-0*{}*.nii.gz'.format(stim_id)))
+    print("We have {} nifti files.".format(len(file_list)))
+    pool = Pool(processes=16)
+    pool.map(fslmeants_run, file_list)
+    timeseries_concat(stim_id)
 main()
