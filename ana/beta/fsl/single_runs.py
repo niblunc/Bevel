@@ -1,11 +1,6 @@
-
-import os
-import glob
-import numpy as np
+import glob, os
 import pandas as pd
-import pdb
 import subprocess
-from multiprocessing import Pool
 import argparse
 
 def set_parser():
@@ -21,48 +16,12 @@ def set_parser():
                         action="store_true", help='generate timeseries text files, uses flsmeants currently')
     parser.add_argument('-tpath',dest='trial_path',help='path to the directory that holds the trial log (.txt) text files.')
     parser.add_argument('-nii_path',dest='nifti_path', help='path to the directory for the output nifti (.nii.gz) files.')
-    parser.add_argument('-cond',dest='condition', help="condition of analysis")
+    parser.add_argument('-stim',dest='stim_id', help="stimulus condition id")
     
     args = parser.parse_args()
 
     return args
-    
-    
-        
-def combine_timeseries():
-    roi_dict = {}
-    outpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/by_sub"
-    roi_dir = glob.glob(os.path.join("/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/by_roi/*.txt"))
-    for roi_file in sorted(roi_dir):
-        #print(roi_file)
-        sub_id = roi_file.split("/")[-1].split("_")[0]
-        condition = roi_file.split("/")[-1].split("_")[1]
-        #print(sub_id)
-        if sub_id not in roi_dict:
-            roi_dict[sub_id] = {"reward_rois" : [], "punish_rois": []}
-        roi_df = pd.read_csv(roi_file, sep="\n", header=None)
-        if condition == "reward":
-            roi_dict[sub_id]["reward_rois"].append(roi_df)
-        else:
-            roi_dict[sub_id]["punish_rois"].append(roi_df)
-    #print(roi_dict)
-    for sub_id in roi_dict:
-        reward_outpath = os.path.join(outpath, "{}_reward.txt".format(sub_id))
-        punish_outpath = os.path.join(outpath, "{}_punish.txt".format(sub_id))
-        reward_dataframes=roi_dict[sub_id]['reward_rois']
-        punish_dataframes=roi_dict[sub_id]['punish_rois']
-        final_reward_df = pd.concat(reward_dataframes, axis=1, sort=False)
-        final_punish_df = pd.concat(punish_dataframes, axis=1, sort=False)
-        #print(final_reward_df.head())
-        print("Writing files..... \n{} \n and ....... \n{}".format(reward_outpath, punish_outpath))
-        final_reward_df.to_csv(reward_outpath, header=None, index=None, sep="\t")
-        final_punish_df.to_csv(punish_outpath, header=None, index=None, sep="\t")
-    print("Completed making timeseries")
-    #print(roi_dict)
-    
-    
-# NEED TO PARALLEIZE ASAP 
-# sooooooooooo slowwwwwwww!!!!
+
 def pull_timeseries(nifti):
     # get nifti files
     out_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/by_roi"
@@ -88,13 +47,10 @@ def pull_timeseries(nifti):
         cmd='fslmeants -i {} -o {} -c {} {} {} --usemm \n\n'.format(nifti, out_path, x, y, z)
         print("Running shell command: {}".format(cmd))
         subprocess.run(cmd, shell=True)
-    
 
 
-# *************************************************************************************
 
-#local output directory
-def concat_trials(files, trial_dict, nii_out, cond):
+def concat_trials(files, trial_dict, nii_out, stim_id):
     for file in files:
         sub=file.split('/')[-1].split('_')[0]
         run=file.split('/')[-1].split('_')[1]
@@ -116,52 +72,55 @@ def concat_trials(files, trial_dict, nii_out, cond):
         punish_trial_nums = punish_trial_nums['trial_num']
         punish_trials = punish_trial_nums.values.tolist()
         trial_dict[sub][run]["punish"] = punish_trials
-
+    #print(trial_dict)
     for sub in trial_dict:
-        reward_path=os.path.join(nii_out, '%s_reward'%(sub))
-        punish_path=os.path.join(nii_out, '%s_punish'%(sub))
+        reward_path=os.path.join(nii_out, '%s_reward_%s'%(sub, stim_id))
+        punish_path=os.path.join(nii_out, '%s_punish_%s'%(sub,stim_id))
         reward_files=['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', reward_path]
         punish_files=['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', punish_path]
         print(sub)
-        pe1=glob.glob(os.path.join('/projects/niblab/bids_projects/Experiments/Bevel/derivatives/{}/func/Analysis/feat1/beta/run-*/{}_run-*_{}-*.feat/stats/pe1.nii.gz'.format(sub,sub,cond)))
+        pe1=glob.glob(os.path.join('/projects/niblab/bids_projects/Experiments/Bevel/derivatives/{}/func/Analysis/beta/run-*/{}_run-*_{}-*.feat/stats/pe1.nii.gz'.format(sub,sub, stim_id)))
+        #print("PE1: {}".format(pe1))
         for run in trial_dict[sub]:
              # Get all available pe1 files per subject, not distinguished by runs
             for trial in trial_dict[sub][run]:
                 if trial == "reward":
-                    temp=[x for x in pe1 if int(x.split("/")[-3].split("_")[2].split("-")[1].split('.')[0]) in  trial_dict[sub][run][trial]]
-                    for x in temp:
-                        reward_files.append(x)
+                    try:
+                        temp=[x for x in pe1 if int(x.split("/")[-3].split("_")[2].split("-")[1].split('.')[0]) in  trial_dict[sub][run][trial]]
+                        for x in temp:
+                            reward_files.append(x)
+                    except:
+                        print("PASSING BAD, {}".format(sub))
                 else:
-                    temp=[x for x in pe1 if int(x.split("/")[-3].split("_")[2].split("-")[1].split('.')[0]) in  trial_dict[sub][run][trial]]
-                    for x in temp:
-                        punish_files.append(x)
-                        
+                    #print("PUNISH...", pe1)
+                    try:
+                        temp=[x for x in pe1 if int(x.split("/")[-3].split("_")[2].split("-")[1].split('.')[0]) in  trial_dict[sub][run][trial]]
+                        for x in temp:
+                            punish_files.append(x)
+                    except:
+                        print("PASSING BAD, ", sub)
         reward_cmd=' '.join(reward_files)
         punish_cmd=' '.join(punish_files)
         print("Running reward command........... \n{} \n\nRunning punish command......... \n{} \n\n".format(reward_cmd,punish_cmd))
-        #subprocess.run(reward_cmd, shell=True)
-        #subprocess.run(punish_cmd, shell=True)
+        subprocess.run(reward_cmd, shell=True)
+        subprocess.run(punish_cmd, shell=True)
 
 
     print("Completed making individual run files.")
     
-# Our main() function:
-# We get initially get our inputs, we need: a path to the trial logs, 
-# an output directory path, a derivatives directory path (or directorty where the subjects (sub-*) input directories are held)
-# 
-def main(): 
-    #trial_path='/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/trial_logs'
-    #output_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/niftis"
-    args=set_parser()
     
-    arglist={}
-    for a in args._get_kwargs():
-        arglist[a[0]]=a[1]
+    
+def main(): 
+    args = set_parser()
+    print(args)
+    trial_path='/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/trial_logs'
+    #trial_path=str(args.trial_path)
+    #nii_out=str(args.nifti_path)
+    #stim_id=str(args.stim_id)
+    stim_id="choice"
+    nii_out = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/niftis"
+    #print(str(trial_path))
     trial_dict ={}
-    #print("Argument list: \n{}".format(type(args)))
-    trial_path = args.trial_path #arglist['trial_path']
-    nii_outpath = args.nifti_path #arglist['nifti_path']
-    condition=args.condition
     
     text_files = glob.glob(os.path.join(trial_path,'*sub*run*txt'))
     good_subs=[x.split("/")[-1] for x in glob.glob("/projects/niblab/bids_projects/Experiments/Bevel/derivatives/sub-0*")]
@@ -170,19 +129,16 @@ def main():
     # get only the text files of the subjects found in good subs 
     files = [x for x in text_files if x.split("/")[-1].split("_")[0] in good_subs]
     files=sorted(files)
-    #print(args.trial_path)
-    # Run if we want to run fslmerge and create nifti ROI files (-roi flag)
-    if args.fslmerge == True:
+    concat_trials(files, trial_dict, nii_out, stim_id)
+    """if args.fslmerge == True:
         print("Starting fslmerge function....")
-        concat_trials(files, trial_dict, nii_outpath, condition)
+        concat_trials(files, trial_dict, nii_out, stim_id)
     if args.fslmeants == True:
         print("Starting fslmeants function....")
-        print(args.fslmeants)
         nifti_run_files=glob.glob(os.path.join(nii_outpath, "*.nii.gz"))
-        file_list = glob.glob(os.path.join("/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/niftis", 'sub-0*.nii.gz'))
+        file_list = glob.glob(os.path.join(nii_out, 'sub-0*{}*.nii.gz'.format(stim_id)))
         print("We have {} nifti files.".format(len(file_list)))
         pool = Pool(processes=16)
-        #pool.map(pull_timeseries, file_list)
-        #combine_timeseries()
-    
+        pool.map(pull_timeseries, file_list)"""
+        
 main()
