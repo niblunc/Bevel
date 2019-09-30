@@ -84,8 +84,18 @@ def fslmeants_run(nifti):
 
 
 
-def fslmerge_run(files, trial_dict, nii_out, stim_id):
-    for file in files:
+def fslmerge_run(files, trial_dict, nii_out, stim_id, subjects):
+    for sub in subjects:
+        pe1=glob.glob(os.path.join('/projects/niblab/bids_projects/Experiments/Bevel/derivatives/{}/func/Analysis/beta/run-*/{}_run-*_{}-*.feat/stats/pe1.nii.gz'.format(sub,sub, stim_id)))
+        out_path=os.path.join(nii_out, '%s_%s'%(sub, stim_id))
+        fslmerge_lst =['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', out_path]
+        for p in pe1:
+            fslmerge_lst.append(p)
+        fslmerge_cmd = ' '.join(fslmerge_lst)
+        print("Running fslmerge on {} for {}.......".format(sub, stim_id))
+        subprocess.run(fslmerge_cmd, shell=True)
+    print("Completed making ROI nifti files for {}, look for output niftis here: {} \n".format(stim_id,nii_out))
+    """for file in files:
         sub=file.split('/')[-1].split('_')[0]
         run=file.split('/')[-1].split('_')[1]
         #print([sub,run])
@@ -94,7 +104,8 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id):
         trial_dict[sub][run] = {}
     
         df = pd.read_csv(file, sep="\t", header=None)
-        df.columns = ["trial_num", "reinforcer"] 
+        df.columns = ["trial_num", "reinforcer"]
+        print(df)
 
         reward_trial_nums = df[df['reinforcer'] == 'reward']
         reward_trial_nums = reward_trial_nums['trial_num']
@@ -112,7 +123,6 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id):
         reward_files=['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', reward_path]
         punish_files=['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', punish_path]
         print(sub)
-        pe1=glob.glob(os.path.join('/projects/niblab/bids_projects/Experiments/Bevel/derivatives/{}/func/Analysis/beta/run-*/{}_run-*_{}-*.feat/stats/pe1.nii.gz'.format(sub,sub, stim_id)))
         #print("PE1: {}".format(pe1))
         for run in trial_dict[sub]:
              # Get all available pe1 files per subject, not distinguished by runs
@@ -134,12 +144,10 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id):
                         print("PASSING BAD, ", sub)
         reward_cmd=' '.join(reward_files)
         punish_cmd=' '.join(punish_files)
+        
         print("Running reward command........... \n{} \n\nRunning punish command......... \n{} \n\n".format(reward_cmd,punish_cmd))
         subprocess.run(reward_cmd, shell=True)
-        subprocess.run(punish_cmd, shell=True)
-
-
-    print("Completed making individual run files.")
+        subprocess.run(punish_cmd, shell=True)"""
     
     
     
@@ -150,7 +158,7 @@ def main():
     #trial_path=str(args.trial_path)
     #nii_out=str(args.nifti_path)
     #stim_id=str(args.stim_id)
-    stim_id="choice"
+    stim_id="rinse"
     nii_out = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/niftis"
     #print(str(trial_path))
     trial_dict ={}
@@ -162,7 +170,7 @@ def main():
     # get only the text files of the subjects found in good subs 
     files = [x for x in text_files if x.split("/")[-1].split("_")[0] in good_subs]
     files=sorted(files)
-    #fslmerge_run(files, trial_dict, nii_out, stim_id)
+    fslmerge_run(files, trial_dict, nii_out, stim_id, good_subs)
     if args.fslmerge == True:
         print("Starting fslmerge function....")
         fslmerge_run(files, trial_dict, nii_out, stim_id)
@@ -170,7 +178,7 @@ def main():
     print("Starting fslmeants function....")
     file_list = glob.glob(os.path.join(nii_out, 'sub-0*{}*.nii.gz'.format(stim_id)))
     print("We have {} nifti files.".format(len(file_list)))
-    pool = Pool(processes=16)
-    pool.map(fslmeants_run, file_list)
-    timeseries_concat(stim_id)
+    #pool = Pool(processes=16)
+    #pool.map(fslmeants_run, file_list)
+    #timeseries_concat(stim_id)
 main()
