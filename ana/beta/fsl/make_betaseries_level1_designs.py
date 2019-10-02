@@ -10,8 +10,8 @@ def make_file(sub_id, run, trial_id, output_dir):
         tempfsf=infile.read()
         if not os.path.exists(os.path.join(output_dir, "design_files")):
             os.makedirs(os.path.join(output_dir, "design_files"))
-        design_fileout = os.path.join(output_dir, "design_files/%s_run-%s_trial-%s_design1_rinse.fsf"%(sub_id, run, trial_id))
-        print("Making file {}.........\n".format(design_fileout))
+        design_fileout = os.path.join(output_dir, "design_files/%s_run-%s_trial-%s_design1_rl.fsf"%(sub_id, run, trial_id))
+        print("Making file............... \n{}".format(design_fileout))
         # SET PARAMS 
         out_param = _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id]["OUTPUT"]
         func_param = _dict[sub_id][run]["FUNCRUN"]
@@ -76,7 +76,7 @@ def create_fsf():
                 _dict[sub_id][run]['MOCO%i'%i] = motcor
             # GET TRIALS 
             bevel_id = sub_id.replace("sub-0", "bevel")
-            subj_trials = sorted(glob.glob(os.path.join(sub_path, "func", "onsets", "bevel*run0%s*rinse*trial*.txt"%run)))
+            subj_trials = sorted(glob.glob(os.path.join(sub_path, "func", "onsets", "bevel*run0%s_trial*.txt"%run)))
             if not subj_trials:
                 pass
             else:
@@ -84,10 +84,10 @@ def create_fsf():
                 for trial_file in subj_trials:
                     _id = sub_id.split("-")[1]
                     _id = _id[1:]
-                    trial_id = trial_file.split("/")[-1].split(".")[0].split("_")[3].split("l")[1]
+                    trial_id = trial_file.split("/")[-1].split(".")[0].split("_")[2].split("l")[1]
                     #print(trial_id)
-                    nuis_file = os.path.join(sub_path, "func", "onsets", "bevel%s_run0%s_rinse_nuis%s.txt"%(_id, run, trial_id))
-                    output_path = os.path.join(output_dir, "%s_run-%s_rinse-%s"%(sub_id, run, trial_id))
+                    nuis_file = os.path.join(sub_path, "func", "onsets", "bevel%s_run0%s_nuis%s.txt"%(_id, run, trial_id))
+                    output_path = os.path.join(output_dir, "%s_run-%s_%s-%s"%(sub_id, run, "rl", trial_id))
                     _dict[sub_id][run]["TRIALS"]["TRIAL%s"%trial_id] = {"TRIAL" : trial_file, "NUIS": nuis_file, "OUTPUT" : output_path}
                     make_file(sub_id, run, trial_id,output_dir) 
 def set_paths():

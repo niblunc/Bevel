@@ -10,7 +10,7 @@ for sub in sorted(subs):
     sub_id = sub.split("/")[-1]
     if sub_id not in beta_dict:
         beta_dict[sub_id] = {}
-    feat_dirs = glob.glob(os.path.join(sub,"func/Analysis/feat1/betaseries/run-*/*_run-*_trial-*.feat/stats"))
+    feat_dirs = glob.glob(os.path.join(sub,"func/Analysis/beta/run-*/*_rl-*.feat/stats"))
     total_trial_ct = len(feat_dirs)
     beta_dict[sub_id]["TOTAL_TRIALS_CT"] = total_trial_ct
     run1_trials=[x for x in feat_dirs if x.split('/')[-3] == "run-1"]
@@ -60,10 +60,10 @@ notzero_df1 =  df[notzero1 & notzero2 & notzero3 & notzero4]
 notzero_df2 =  df[notzero1 & notzero2 & notzero3 | notzero4]
 notzero_df3 =  df[notzero1 & notzero2 | notzero3 | notzero4]
 
-
+excepted_lst = ["sub-005", "sub-013", "sub-015", "sub-030", "sub-035", "sub-036", "sub-039", "sub-053", "sub-086"]
 # list of subjects with trials done for all 4 runs - 
 all_runs_list = notzero_df1.index.tolist()
-missing_runs_list = [x for x in sub_ids if x not in all_runs_list]
+missing_runs_list = [x for x in sub_ids if x not in all_runs_list and x not in excepted_lst]
 
 index = ["RUN1_TRIALS_CT", "RUN2_TRIALS_CT", "RUN3_TRIALS_CT", "RUN4_TRIALS_CT", "TOTAL_TRIALS_CT"]
 df_mia = pd.DataFrame(index=index, columns=missing_runs_list)

@@ -25,12 +25,12 @@ def set_parser():
 
 def timeseries_concat(stim_id):
     roi_dict = {}
-    inpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_roi".format(stim_id)
-    outpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_sub".format(stim_id)
+    inpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/rois".format(stim_id)
+    outpath="/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/subs".format(stim_id)
     roi_dir = glob.glob(os.path.join(inpath, "*.txt"))
     #print(roi_dir)
     
-    for roi_file in sorted(roi_dir):
+    """for roi_file in sorted(roi_dir):
         sub_id = roi_file.split("/")[-1].split("_")[0]
         if sub_id not in roi_dict:
             roi_dict[sub_id] = {stim_id:[]}
@@ -44,7 +44,9 @@ def timeseries_concat(stim_id):
         concat_df.to_csv(file_outpath, header=None, index=None, sep="\t")
         
         
-    """for roi_file in sorted(roi_dir):
+    """
+    
+    for roi_file in sorted(roi_dir):
         #print(roi_file)
         sub_id = roi_file.split("/")[-1].split("_")[0]
         condition = roi_file.split("/")[-1].split("_")[1]
@@ -66,8 +68,8 @@ def timeseries_concat(stim_id):
         final_punish_df = pd.concat(punish_dataframes, axis=1, sort=False)
         #print(final_reward_df.head())
         print("Writing files..... \n{} \n and ....... \n{}".format(reward_outpath, punish_outpath))
-        #final_reward_df.to_csv(reward_outpath, header=None, index=None, sep="\t")
-        #final_punish_df.to_csv(punish_outpath, header=None, index=None, sep="\t")"""
+        final_reward_df.to_csv(reward_outpath, header=None, index=None, sep="\t")
+        final_punish_df.to_csv(punish_outpath, header=None, index=None, sep="\t")
     print("Completed making by-subject timeseries")
     #print(roi_dict)
     
@@ -77,7 +79,7 @@ def timeseries_concat(stim_id):
 
 
 def fslmerge_run(files, trial_dict, nii_out, stim_id, subjects):
-    for sub in subjects:
+    """for sub in subjects:
         pe1=glob.glob(os.path.join('/projects/niblab/bids_projects/Experiments/Bevel/derivatives/{}/func/Analysis/beta/run-*/{}_run-*_{}-*.feat/stats/pe1.nii.gz'.format(sub,sub, stim_id)))
         out_path=os.path.join(nii_out, '%s_%s'%(sub, stim_id))
         fslmerge_lst =['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', out_path]
@@ -87,7 +89,9 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id, subjects):
         print("Running fslmerge on {} for {}.......".format(sub, stim_id))
         subprocess.run(fslmerge_cmd, shell=True)
     print("Completed making ROI nifti files for {}, look for output niftis here: {} \n".format(stim_id,nii_out))
-    """for file in files:
+    """
+    
+    for file in files:
         sub=file.split('/')[-1].split('_')[0]
         run=file.split('/')[-1].split('_')[1]
         #print([sub,run])
@@ -97,7 +101,7 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id, subjects):
     
         df = pd.read_csv(file, sep="\t", header=None)
         df.columns = ["trial_num", "reinforcer"]
-        print(df)
+        #print(df)
 
         reward_trial_nums = df[df['reinforcer'] == 'reward']
         reward_trial_nums = reward_trial_nums['trial_num']
@@ -109,19 +113,24 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id, subjects):
         punish_trials = punish_trial_nums.values.tolist()
         trial_dict[sub][run]["punish"] = punish_trials
     #print(trial_dict)
+    
     for sub in trial_dict:
-        reward_path=os.path.join(nii_out, '%s_reward_%s'%(sub, stim_id))
-        punish_path=os.path.join(nii_out, '%s_punish_%s'%(sub,stim_id))
+        pe1=glob.glob(os.path.join('/projects/niblab/bids_projects/Experiments/Bevel/derivatives/{}/func/Analysis/beta/run-*/{}_run-*_{}-*.feat/stats/pe1.nii.gz'.format(sub,sub, "rl")))
+        reward_path=os.path.join(nii_out, '%s_reward'%(sub))
+        punish_path=os.path.join(nii_out, '%s_punish'%(sub))
         reward_files=['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', reward_path]
         punish_files=['/projects/niblab/modules/software/fsl/5.0.10/bin/fslmerge', '-t', punish_path]
-        print(sub)
+        #print(pe1)
         #print("PE1: {}".format(pe1))
         for run in trial_dict[sub]:
              # Get all available pe1 files per subject, not distinguished by runs
             for trial in trial_dict[sub][run]:
                 if trial == "reward":
                     try:
+                        #for x in pe1:
+                            #print(x.split("/")[-3].split("_")[2].split("-")[1].split('.')[0])
                         temp=[x for x in pe1 if int(x.split("/")[-3].split("_")[2].split("-")[1].split('.')[0]) in  trial_dict[sub][run][trial]]
+                        
                         for x in temp:
                             reward_files.append(x)
                     except:
@@ -134,19 +143,20 @@ def fslmerge_run(files, trial_dict, nii_out, stim_id, subjects):
                             punish_files.append(x)
                     except:
                         print("PASSING BAD, ", sub)
+                    
         reward_cmd=' '.join(reward_files)
         punish_cmd=' '.join(punish_files)
         
         print("Running reward command........... \n{} \n\nRunning punish command......... \n{} \n\n".format(reward_cmd,punish_cmd))
         subprocess.run(reward_cmd, shell=True)
-        subprocess.run(punish_cmd, shell=True)"""
+        subprocess.run(punish_cmd, shell=True)
     
     
 def fslmeants_run(nifti):
     print(nifti)
     # get nifti files
     stim_id = nifti.split("/")[-1].split("_")[1].split(".")[0]
-    out_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/{}/by_roi".format(stim_id)
+    out_dir = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/timeseries/rl/rois".format(stim_id)
     # split
     beta_text_file = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/betaseries_rois.txt"
     df = pd.read_csv(beta_text_file, sep="\t")
@@ -165,7 +175,7 @@ def fslmeants_run(nifti):
         out_path = os.path.join(out_dir, "{}_{}_{}.txt".format(sub_id, sub_condition, roi))
         #print("Output file being made: {}".fomrat(out_path))
         cmd='fslmeants -i {} -o {} -c {} {} {} --usemm \n\n'.format(nifti, out_path, x, y, z)
-        print("Running shell fslmeants command X for roi {} on file: {}".format(roi, nifti.split("/")[-1]))
+        print("Running shell fslmeants command X for roi {} on file: {}".format(roi, cmd))# nifti.split("/")[-1]))
         subprocess.run(cmd, shell=True)
         
     
@@ -177,7 +187,7 @@ def main():
     #trial_path=str(args.trial_path)
     #nii_out=str(args.nifti_path)
     #stim_id=str(args.stim_id)
-    stim_id="rinse"
+    stim_id="rl"
     nii_out = "/projects/niblab/bids_projects/Experiments/Bevel/derivatives/betaseries/output/niftis"
     #print(str(trial_path))
     trial_dict ={}
@@ -189,6 +199,7 @@ def main():
     # get only the text files of the subjects found in good subs 
     files = [x for x in text_files if x.split("/")[-1].split("_")[0] in good_subs]
     files=sorted(files)
+    
     #fslmerge_run(files, trial_dict, nii_out, stim_id, good_subs)
     if args.fslmerge == True:
         print("Starting fslmerge function....")
