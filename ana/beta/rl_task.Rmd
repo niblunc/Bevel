@@ -1,0 +1,126 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Load Data
+
+```{r}
+
+ph.data<-read.csv("Bevel/ana/beta/punish_corr_matrix.csv", header=FALSE) 
+rwd.data<-read.csv("Bevel/ana/beta/reward_corr_matrix.csv", header=FALSE) 
+
+
+rwd.corr<-cor(rwd.data)
+ph.corr<-cor(ph.data)
+head(ph.corr,3)
+```
+
+Visualize Correlations
+
+
+```{r}
+library(corrplot)
+library(RColorBrewer)
+```
+
+Reward Correlation:
+
+```{r}
+
+corrplot(rwd.corr,  tl.col="black", tl.srt=45,
+         col=brewer.pal(n=8, name="PuOr"))
+corrplot(rwd.corr, col=c("black", "white"),
+         bg="lightblue", tl.col="black", tl.srt=45)
+```
+
+Punish Correlation:
+
+```{r}
+corrplot(ph.corr,  tl.col="black", tl.srt=45,
+         col=brewer.pal(n=8, name="PuOr"))
+corrplot(ph.corr, col=c("black", "white"),
+         bg="lightblue",  tl.col="black", tl.srt=45)
+```
+
+```{r}
+pooled.cor <- cor.test(ph.corr, rwd.corr)
+pooled.cor
+```
+
+```{r}
+pooled.corr <- corr.test(ph.corr, rwd.corr)
+#pooled.corr
+print(corr.p(pooled.corr$r, n=85),short=FALSE)
+#corrplot(pooled.corr$r, 
+         #sig.level = 0.01, insig="blank", tl.col="black", tl.srt=45,
+         #col=brewer.pal(n=8, name="PuOr"))
+#pooled.corr$ci
+```
+
+```{r}
+both <- lowerUpper(ph.corr, rwd.corr, diff=TRUE)
+#pooled.lowUp
+corPlot(both,numbers=TRUE,main="Differences between punishment and reward")
+
+```
+
+
+Correlation Testing
+
+```{r}
+
+#cortest.normal(ph.data,rwd.data,n1=85,n2=85, fisher = TRUE) #The Steiger test
+#cortest.jennrich(ph.data,rwd.data,n1=85,n2=85) # The Jennrich test
+cortest.mat(ph.data,rwd.data,n1=85,n2=85)  #twice the degrees of freedom as the Jennrich
+```
+
+
+```{r}
+cortest.normal(rwd.data, n1=85, n2=85)
+```
+
+```{r}
+corrplot(ph.corr, 
+         p.mat = M, sig.level = 0.05, insig="blank", tl.col="black", tl.srt=45,
+         col=brewer.pal(n=8, name="PuOr"))
+```
+
+```{r}
+
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+# matrix of the p-value of the correlation
+
+```
+
+
+```{r}
+ph.mat <- cor.mtest(ph.data)
+head(ph.mat[, 1:5])
+
+corrplot(ph.corr, 
+         p.mat = ph.mat, sig.level = 0.05, insig="blank", tl.col="black", tl.srt=45,
+         col=brewer.pal(n=8, name="PuOr"))
+```
+
+```{r}
+rwd.mat <- cor.mtest(rwd.data)
+head(rwd.mat[, 1:5])
+corrplot(rwd.corr, 
+         p.mat = rwd.mat, sig.level = 0.01, insig = "blank", tl.col="black", tl.srt=45,
+         col=brewer.pal(n=8, name="PuOr"))
+```
+
