@@ -6,14 +6,33 @@ output: html_notebook
 Load Data
 
 ```{r}
+library(psych)
+ph.data<-read.csv("punish_corr_matrix.csv", header=FALSE)#,row.names = 1) 
+rwd.data<-read.csv("reward_corr_matrix.csv", header=FALSE)#,row.names=1) 
+ph.M<-as.matrix(ph.data)
+rwd.M<-as.matrix(rwd.data)
 
-ph.data<-read.csv("Bevel/ana/beta/punish_corr_matrix.csv", header=FALSE) 
-rwd.data<-read.csv("Bevel/ana/beta/reward_corr_matrix.csv", header=FALSE) 
+comp.corr <-corr.test(ph.M,rwd.M)
+```
 
 
-rwd.corr<-cor(rwd.data)
-ph.corr<-cor(ph.data)
-head(ph.corr,3)
+```{r}
+library(corrplot)
+#library(correlograms)
+comp.corr$t
+#corrplot(comp.corr$t, is.corr=FALSE, method="square")
+        # sig.level = 0.01, insig="blank", tl.col="black", tl.srt=45)
+         #col=brewer.pal(n=8, name="PuOr"))
+#pooled.corr$ci
+#corrplot(comp.corr$r, sig.level = 0.01, insig="blank", tl.col="black", tl.srt=45)
+         #col=brewer.pal(n=8, name="PuOr"))
+
+```
+
+
+```{r}
+comp.corr$p
+comp.corr$t
 ```
 
 Visualize Correlations
@@ -51,7 +70,7 @@ pooled.cor
 ```{r}
 pooled.corr <- corr.test(ph.corr, rwd.corr)
 #pooled.corr
-print(corr.p(pooled.corr$r, n=85),short=FALSE)
+#print(corr.p(pooled.corr$r, n=85),short=FALSE)
 #corrplot(pooled.corr$r, 
          #sig.level = 0.01, insig="blank", tl.col="black", tl.srt=45,
          #col=brewer.pal(n=8, name="PuOr"))
