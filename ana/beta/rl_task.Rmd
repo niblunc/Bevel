@@ -7,13 +7,21 @@ Load Data
 
 ```{r}
 
-ph.data<-read.csv("Bevel/ana/beta/punish_corr_matrix.csv", header=FALSE) 
-rwd.data<-read.csv("Bevel/ana/beta/reward_corr_matrix.csv", header=FALSE) 
+ph.data<-read.csv("/Users/nikkibytes/Documents/niblunc/Bevel/ana/beta/punish_corr_matrix.csv", header=FALSE) 
+rwd.data<-read.csv("/Users/nikkibytes/Documents/niblunc/Bevel/ana/beta/reward_corr_matrix.csv", header=FALSE) 
 
 
-rwd.corr<-cor(rwd.data)
-ph.corr<-cor(ph.data)
+
+rwd.corr<-as.matrix(rwd.data)
+ph.corr<-as.matrix(ph.data)
 head(ph.corr,3)
+
+
+```
+
+```{r}
+ph.data
+ph.corr
 ```
 
 Visualize Correlations
@@ -51,15 +59,17 @@ pooled.cor
 ```{r}
 pooled.corr <- corr.test(ph.corr, rwd.corr)
 #pooled.corr
-print(corr.p(pooled.corr$r, n=85),short=FALSE)
-#corrplot(pooled.corr$r, 
-         #sig.level = 0.01, insig="blank", tl.col="black", tl.srt=45,
-         #col=brewer.pal(n=8, name="PuOr"))
-#pooled.corr$ci
+#print(corr.p(pooled.corr$r, n=85),short=FALSE)
+corrplot(pooled.corr$p, tl.col="black", tl.srt=45, col=brewer.pal(n=8, name="PuOr"))
+
+#pooled.corr$p
+M<-p.adjust(pooled.corr$p, method="BH")
+##corrplot(matrix(M), tl.col="black", tl.srt=45, col=brewer.pal(n=8, name="PuOr"))
+#matrix(M)
 ```
 
 ```{r}
-both <- lowerUpper(ph.corr, rwd.corr, diff=TRUE)
+both <- lowerUpper(pooled, rwd.corr, diff=TRUE)
 #pooled.lowUp
 corPlot(both,numbers=TRUE,main="Differences between punishment and reward")
 
